@@ -21,7 +21,6 @@ Two Claude Code skills that search the web, read the papers, verify the citation
 - [Requirements](#requirements) — genuinely just Claude Code
 - [Reading your library](#reading-your-library) — browsing past reports
 - [Design notes](#design-notes) — why the reports are built this way
-- [Why there's no `/presearch`](#why-theres-no-presearch) — we tried it; it invented citations
 
 ## Install
 
@@ -81,7 +80,7 @@ Naming is a kebab-case slug of the topic (`solid-state-batteries.html`). Researc
 
 **Claude Code with web search enabled.** That's the whole list.
 
-No API keys, no MCP servers, no paid services. This used to require a Perplexity subscription for one of the commands; [it doesn't anymore](#why-theres-no-presearch), and the reports got *more* accurate when that dependency went away.
+No API keys, no MCP servers, no paid services, nothing to sign up for.
 
 ## Reading your library
 
@@ -110,26 +109,6 @@ A few deliberate choices, in case you're wondering:
 - **Primary sources over blog rehashes.** Full pages are fetched only for sources that genuinely add depth, and WebFetch is asked to *extract specific fields* — sample size, effect size, funding — not to summarize. Cheaper and sharper.
 - **It knows when to stop.** Searches run to saturation — once new queries only resurface sources already seen, the topic is covered. No padding the count.
 - **The chat summary is part of the product.** You shouldn't have to open a file to learn what it says.
-
-## Why there's no `/presearch`
-
-There used to be. It did the same job through the **Perplexity API** instead of plain web search, on the theory that a dedicated research API would find better sources than a search engine.
-
-We tested that properly: identical prompt, same topic (NMN / NAD+ supplements), two isolated agents, neither aware of the other or of the comparison. The free path won on every axis that mattered.
-
-|  | `/cresearch` (free) | `/presearch` (paid) |
-|:--|:--|:--|
-| API cost | **$0** | $0.034 |
-| Wall-clock | 5 min 51 s | 5 min 50 s |
-| Sources cited | **23** | 15 |
-| Page fetches needed | **7** | 12 |
-| **Fabricated citations** | **none** | **fake PMCIDs, fake DOIs, wrong author** |
-
-Perplexity returned a confidently formatted paper list containing **PMCIDs and DOIs that do not exist** (`PMC9876543`; `doi:10.1002/age.2021.0001`, for which Crossref returns nothing), and attributed a real *Nature Metabolism* trial to the wrong first author. These were caught only by checking every identifier against Crossref and the primary pages — both free, and both things `/cresearch` already does. The paid tool created the problem; the free tools cleaned it up, which is why it needed *more* fetches, not fewer.
-
-The deeper reason is architectural, and it isn't going to change: **WebSearch returns search results, not generated prose, so it structurally cannot invent a DOI.** A generative research API can — and on the one job it should have won, finding the papers, it hallucinated them.
-
-So `/presearch` is retired, and the lesson it taught is now a hard rule in `/cresearch`. It's recoverable from git history if you disagree.
 
 ---
 
