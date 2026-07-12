@@ -30,7 +30,9 @@ Cover the topic from multiple angles. **Budget: roughly 6–10 searches and 2–
 - **Overview** — what the subject is, key concepts, current state of the field.
 - **Evidence & data** — the numbers the topic actually has: statistics, benchmarks, trends, measurements.
 - **Recent developments** — news and announcements, with a **topic-scaled window**: months for a fast-moving field, years for a slow one. Judge the field's clock — don't default to 12 months.
-- **Counter-case** *(mandatory)* — search explicitly for the strongest disagreement: `<topic> criticism`, `<topic> failed replication`, `<topic> debunked`, `<topic> limitations`, `<topic> meta-analysis re-analysis`, regulatory rejections. Find who disputes the consensus and on what grounds. This is the angle that separates a research report from laundered marketing.
+- **Counter-case** *(mandatory)* — search explicitly for the strongest disagreement: `<topic> criticism`, `<topic> replication`, `<topic> debunked`, `<topic> limitations`, `<topic> meta-analysis re-analysis`, regulatory status. Find who disputes the consensus and on what grounds. This is the angle that separates a research report from laundered marketing.
+
+  **Don't presuppose the counter-case's shape.** Distinguish **contradicted by evidence** from **contested** from **simply untested** — absence of evidence is not evidence of absence. If nobody has replicated a result, say nobody has *tried*; do not imply it failed replication. If something isn't approved, establish whether it was **rejected** or **never submitted** — different findings, and conflating them invents a criticism that doesn't exist. That's the same failure as inventing a citation.
 
 ### Menu (pick 2–3 that fit; skip the rest)
 
@@ -54,7 +56,7 @@ Structure:
 - Table of contents linking to sections.
 - **Overview** — what the topic is and why it matters.
 - **Key findings** — the substance: what you learned, organized into subsections that fit the topic. Use HTML tables for numeric data, `<blockquote>` for notable quotes. Signal the strength of evidence behind major claims (a per-claim tier — strong / moderate / weak / contested — is worth its column).
-- **What's contested / what we don't know** — where sources disagree, which claims rest on weak or single studies, the strongest counter-argument, and what remains genuinely open. This is a reorganization of what the counter-case angle surfaced — no extra research.
+- **What's contested / what we don't know** — where sources disagree, which claims rest on weak or single studies, the strongest counter-argument, and what remains genuinely open. Keep untested separate from disproven; say which one each claim is. This is a reorganization of what the counter-case angle surfaced — no extra research.
 - **Research papers** — a table or list: title (linked), authors, year, venue, one-line takeaway. Blank any field you didn't actually see.
 - **Recent developments** — dated items, newest first.
 - **Sources** — numbered list of every URL used; cite them inline in the body as `[n]` links to this list.
