@@ -1,6 +1,6 @@
 ---
 name: cresearch
-description: Research a topic on the internet (general info, data, news, research/science papers) and compile the findings into a self-contained HTML report saved in ~/claude-research. Use when the user runs /cresearch <topic> or asks for a compiled web-research report on a subject.
+description: The default research skill. Researches a topic on the internet (general info, data, news, research/science papers) and compiles the findings into a self-contained HTML report saved in ~/claude-research. Use when the user runs /cresearch <topic>, asks for a compiled web-research report on a subject, or asks for research on any topic without naming a tool.
 ---
 
 # cresearch
@@ -45,6 +45,21 @@ Fetch full pages with WebFetch only for sources that clearly add depth (seminal 
 **Prompt WebFetch as an extractor, not a summarizer.** Ask for the specific fields the report needs — sample size, effect size, limitations, funding source, exact figures, publication date, authors — not "summarize this page". It returns only what you ask, so a targeted prompt is both cheaper and more usable.
 
 **Never invent citations.** Author, year, and venue go in the report only if actually seen in a source. Leave a field blank rather than guess a plausible-looking value. Keep track of every source URL used.
+
+### Verify every identifier before it goes in the report
+
+**A citation is a claim, and an unverified one is the most dangerous thing in a research report** — it is wrong in a format that looks authoritative. This is not hypothetical: an LLM-generated paper list produced confidently formatted PMCIDs and DOIs that **did not exist** (`PMC9876543`, `doi:10.1002/age.2021.0001`), and separately a publication year guessed from a PMID was off by a year. Both were caught only by checking.
+
+So: **any DOI, PMID, or PMCID you did not personally see on a real page gets checked before publication.** Crossref is free and instant:
+
+```bash
+curl -s "https://api.crossref.org/works/<DOI>" | python3 -c "import sys,json;m=json.load(sys.stdin)['message'];print(m['title'][0],'|',m['author'][0]['family'],'|',m['container-title'][0])"
+# no JSON back  =>  the DOI does not exist  =>  the citation is fabricated. Drop it.
+```
+
+For PubMed/PMC, WebFetch the article page and read the title and authors off it. Extract the exact fields (authors, year, venue, n, effect size, p-value) from that page rather than trusting any upstream summary — the primary source is both free and more accurate than a model's paraphrase of it.
+
+A field you cannot verify is **left blank**, and a source you cannot resolve is **dropped**, not softened.
 
 ## Step 2 — Compile the HTML report
 
