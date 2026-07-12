@@ -17,27 +17,41 @@ Before researching, `grep -ril` the topic keywords against `~/claude-research/`.
 
 Load the Perplexity MCP tools with ToolSearch (`select:mcp__perplexity__search,mcp__perplexity__deep_research,mcp__perplexity__reason`).
 
-### Default: parallel `search` calls, NOT `deep_research`
+### THE COST RULE: cap the output on every single call
 
-**`deep_research` costs roughly 4× a full set of `search` calls (~60¢ vs ~15¢) and most of what it bills for is prose you throw away** — Perplexity's job here is facts and citations; *you* write the report. Don't pay Sonar Deep Research to draft an essay you will discard.
+**The bill is driven by output verbosity, not by which model you pick.** This was measured, not assumed:
 
-So the default is **4–5 `mcp__perplexity__search` calls issued as one parallel batch**, one per angle:
+| Call | Output | Approx. cost |
+|---|---|---|
+| `deep_research`, uncapped | 91,512 chars | ~60¢ |
+| `search` (Sonar Pro), uncapped | **99,072 chars** | **~37¢** |
+| `search` (Sonar Pro), **hard word cap** | **~1,600 chars** | **~1.6¢** |
+
+Left alone, *every* Perplexity model writes a ~90–100k-character essay: preamble, "practical implications", "alternatives", safety boilerplate, step-by-step reasoning. All of it is padding you throw away — **you** write the report; Perplexity's job is facts and citations. Worse, Sonar Pro bills output at **$15/M** vs Deep Research's **$8/M**, so an uncapped "cheap" search can cost *more* than deep research. And a 90k-char result overflows the tool limit, spills to a file, and bills you a second time in context to read back.
+
+**So: every query — `search`, `reason`, or `deep_research` — carries an explicit brevity constraint.** This is the whole ballgame; a ~60× reduction. Put it in the query text:
+
+> Answer in UNDER 200 WORDS. Terse bullet points. NO preamble, NO "practical implications", NO "alternatives", NO step-by-step reasoning, NO safety boilerplate. Facts and citations only.
+
+Then ask a **narrow, specific question**. Broad multi-part asks invite essays.
+
+### Default: 4–5 capped `search` calls in one parallel batch
+
+One per angle:
 
 - **Overview** — what it is, key concepts, current state.
-- **Evidence & data** — the actual numbers: statistics, effect sizes, sample sizes, trends.
-- **Research papers** — titles, authors, years, venues, PubMed/arXiv/DOI links.
+- **Evidence & data** — the numbers: effect sizes, sample sizes, doses, trends.
+- **Research papers** — titles, years, venues, PubMed/arXiv/DOI **links** (links, not prose).
 - **Recent developments** — topic-scaled window (months for a fast field, years for a slow one).
 - **Counter-case** *(mandatory — see below)*.
 
-Ask each one for sources with URLs. Optionally follow with one `mcp__perplexity__reason` call if the angles genuinely conflict and need synthesis.
+### Exact numbers come from WebFetch, not Perplexity
+
+A capped search returns the **landscape and the citations**; it will *not* reliably give you a trial's dose, p-value, authors or PMID. Don't fix that by uncapping the search — **WebFetch the primary source and extract the fields**. It is free, and it is *more accurate*: on a live run, WebFetch on the PubMed page corrected a publication year that had been guessed from the model's output.
 
 ### `--deep` (opt-in only)
 
-Use `mcp__perplexity__deep_research` **only when the user passes `--deep`**, or when the topic is broad or obscure enough that parallel searches come back thin. When you do use it, **constrain the output** — an uncapped deep_research answer runs 90k+ characters, overflows the tool result to a file, and costs a second time in context to read back:
-
-> Return dense, citation-bearing bullet points — findings, numbers, paper titles, source URLs. Do not write flowing prose or an essay. Hard cap ~1500 words.
-
-Keep the query **scoped**. Internal search volume and reasoning tokens — the expensive part — scale with how sprawling the ask is. Request the specific angles, not a treatise.
+Use `deep_research` **only when the user passes `--deep`**, or when capped searches come back genuinely thin. Cap its output too (~1500 words, dense cited bullets). Its extra cost buys internal search breadth, not better prose.
 
 If no Perplexity tools are available at all, tell the user and offer to run `/cresearch` instead — don't silently substitute.
 
