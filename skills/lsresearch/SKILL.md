@@ -17,4 +17,9 @@ Input: an optional topic after the command. Output: a list of matching reports i
    ```
    plus a filename match on the same keywords. Union the results.
 4. No topic given → list every report.
-5. For each match, show: file path, report title (from `<title>`), and last-modified date. Sort newest first. If nothing matches, say so and mention how many reports exist in total.
+5. For each match, show: file path, report title (from `<title>`), last-modified date, its `<h2>` section headings, and how many sources it cites — enough to judge a report without opening it. One extra pass per file, e.g.:
+   ```bash
+   grep -o '<h2[^>]*>[^<]*' file.html   # section headings
+   grep -c '<li id="s' file.html        # source count
+   ```
+   Sort newest first. If nothing matches, say so and mention how many reports exist in total.
