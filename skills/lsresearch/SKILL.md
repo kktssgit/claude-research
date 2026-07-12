@@ -10,16 +10,10 @@ Input: an optional topic after the command. Output: a list of matching reports i
 ## Steps
 
 1. If `~/claude-research/` doesn't exist or is empty, say so and stop.
-2. Derive match keywords from the topic: the topic words themselves plus obvious synonyms/related terms (e.g. topic "LLMs" also matches "language model", "GPT", "transformer"). Case-insensitive.
-3. Find matches by checking both **filenames** and **file content** — the `<title>` and `<h1>` of each HTML file, e.g.:
+2. Extract just the titles in one pass — never grep full file bodies:
    ```bash
-   grep -ril -e "keyword1" -e "keyword2" ~/claude-research/
+   for f in ~/claude-research/*.html; do printf '%s\t%s\t%s\n' "$f" "$(date -r "$f" +%Y-%m-%d)" "$(grep -o -m1 '<title>[^<]*' "$f" | cut -c8-)"; done
    ```
-   plus a filename match on the same keywords. Union the results.
+3. Match against that list only: filename + title, case-insensitive, using the topic words plus obvious synonyms (e.g. "LLMs" also matches "language model", "GPT", "transformer"). Judge the matches yourself from the title list — no further file reads.
 4. No topic given → list every report.
-5. For each match, show: file path, report title (from `<title>`), last-modified date, its `<h2>` section headings, and how many sources it cites — enough to judge a report without opening it. One extra pass per file, e.g.:
-   ```bash
-   grep -o '<h2[^>]*>[^<]*' file.html   # section headings
-   grep -c '<li id="s' file.html        # source count
-   ```
-   Sort newest first. If nothing matches, say so and mention how many reports exist in total.
+5. Show matches as file path, title, last-modified date, sorted newest first. If nothing matches, say so and mention how many reports exist in total.
