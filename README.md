@@ -12,6 +12,30 @@ Three Claude Code skills that search the web, read the papers, and hand you a si
 
 ---
 
+## Contents
+
+- [Install](#install) — clone, symlink, go
+- [What it does](#what-it-does) — one line in, a cited report out
+- [The three commands](#the-three-commands) — `/cresearch`, `/presearch`, `/lsresearch`
+- [What a report looks like](#what-a-report-looks-like) — anatomy of the output
+- [Requirements](#requirements) — what needs Perplexity, what doesn't
+- [Reading your library](#reading-your-library) — browsing past reports
+- [Design notes](#design-notes) — why the reports are built this way
+
+## Install
+
+```bash
+git clone https://github.com/kktssgit/claude-research ~/vs/claude-research
+
+for s in cresearch presearch lsresearch; do
+  ln -s ~/vs/claude-research/skills/$s ~/.claude/skills/$s
+done
+```
+
+Restart Claude Code — skills are picked up on session start. Type `/cresearch` and go.
+
+Symlinks mean `git pull` updates your skills in place. Nothing is copied, nothing drifts.
+
 ## What it does
 
 You type one line:
@@ -51,20 +75,6 @@ Inside:
 Styled for reading: ~50rem measure, system font stack, generous line-height, and a `prefers-color-scheme: dark` block so it follows your OS theme.
 
 Naming is a kebab-case slug of the topic (`solid-state-batteries.html`). Same topic twice? The date gets appended instead of clobbering your earlier work.
-
-## Install
-
-```bash
-git clone https://github.com/kktssgit/claude-research ~/vs/claude-research
-
-for s in cresearch presearch lsresearch; do
-  ln -s ~/vs/claude-research/skills/$s ~/.claude/skills/$s
-done
-```
-
-Restart Claude Code — skills are picked up on session start. Type `/cresearch` and go.
-
-Symlinks mean `git pull` updates your skills in place. Nothing is copied, nothing drifts.
 
 ## Requirements
 
