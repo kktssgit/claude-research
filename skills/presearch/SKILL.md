@@ -33,7 +33,15 @@ Left alone, *every* Perplexity model writes a ~90–100k-character essay: preamb
 
 > Answer in UNDER 200 WORDS. Terse bullet points. NO preamble, NO "practical implications", NO "alternatives", NO step-by-step reasoning, NO safety boilerplate. Facts and citations only.
 
-Then ask a **narrow, specific question**. Broad multi-part asks invite essays.
+### ONE QUESTION PER CALL — the cap alone is not enough
+
+**Measured on a live run: the word cap held on 3 of 5 calls and was ignored on 2. The two that blew up (73.6 KB and 66.3 KB) were the two written as multi-part questions** — one packed five sub-questions ("does it harm kidneys… is the hair claim replicated… do re-analyses dispute… is the effect smaller in trained people… industry funding?"). The model reads a compound question as licence to write a review article, and the word cap loses.
+
+So the cap is necessary but **not sufficient**. The binding rule:
+
+- **One question per call.** If the query contains "and" joining two distinct questions, or a semicolon-separated list of sub-topics, **split it into separate parallel calls** — they cost the same and they actually obey the cap.
+- A request for a *list of one kind of thing* ("give the loading dose, maintenance dose, effect size, non-responder rate") is fine — that's one question with several fields.
+- A request spanning *several kinds of question* ("cover safety, replication, effect size, and funding") is not. Split it.
 
 ### Default: 4–5 capped `search` calls in one parallel batch
 
